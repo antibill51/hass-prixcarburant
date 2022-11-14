@@ -12,7 +12,7 @@ from homeassistant.components.sensor import (
     SensorEntity,
 )
 from homeassistant.config_entries import SOURCE_IMPORT, ConfigEntry
-from homeassistant.const import ATTR_LATITUDE, ATTR_LONGITUDE, ATTR_NAME, CURRENCY_EURO
+from homeassistant.const import ATTR_LATITUDE, ATTR_LONGITUDE, ATTR_NAME
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryNotReady
 import homeassistant.helpers.config_validation as cv
@@ -146,7 +146,7 @@ class PrixCarburant(SensorEntity):
         self._attr_icon = "mdi:gas-station"
         self._attr_device_class = SensorDeviceClass.MONETARY
         self._attr_unique_id = "_".join([DOMAIN, self.station_id, self.fuel])
-        self._attr_native_unit_of_measurement = CURRENCY_EURO
+        self._attr_native_unit_of_measurement = "€/L"
         if self.station_info[ATTR_NAME] != "undefined":
             station_name = f"Station {self.station_info[ATTR_NAME]}"
         else:
