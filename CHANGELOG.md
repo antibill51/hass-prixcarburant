@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2.5.0
+
+- Replace `async_setup_platforms` deprecated method
+- Bump requirement
+
 ## 2.4.0
 
 - Add `days_since_last_update` attribute
