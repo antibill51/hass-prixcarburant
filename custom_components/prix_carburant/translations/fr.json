@@ -4,6 +4,8 @@
       "user": {
         "description": "Récupération de la liste des stations depuis la localisation de votre Home-Assistant (à vérifier dans les options générales). Sélectionnez ensuite les carburants dont vous souhaitez obtenir les tarifs.",
         "data": {
+          "scan_interval": "Temps en heures entre deux mise à jour de données",
+          "display_entity_pictures": "Ajoute le logo de la marque en image d'entité",
           "max_km": "Distance maximum",
           "fuels_Gazole": "Afficher le gasoil",
           "fuels_E10": "Afficher le E10",
@@ -22,6 +24,8 @@
     "step": {
       "init": {
         "data": {
+          "scan_interval": "Temps en heures entre deux mise à jour de données",
+          "display_entity_pictures": "Ajoute le logo de la marque en image d'entité",
           "max_km": "Distance maximum",
           "fuels_Gazole": "Afficher le gasoil",
           "fuels_E10": "Afficher le E10",
@@ -34,6 +38,26 @@
     },
     "abort": {
       "yaml_configuration": "Intégration configurée depuis configuration.yaml"
+    }
+  },
+  "services": {
+    "find_nearest_stations": {
+      "name": "Trouver les stations proches",
+      "description": "Trouver les stations proches les moins chères",
+      "fields": {
+        "entity_id": {
+          "name": "Entité",
+          "description": "Entité possédant une localisation"
+        },
+        "fuel": {
+          "name": "Carburant",
+          "description": "Le type de carburant"
+        },
+        "distance": {
+          "name": "Distance maximum",
+          "description": "Distance maximum entre les stations et l'entité"
+        }
+      }
     }
   }
 }

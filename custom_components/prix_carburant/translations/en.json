@@ -1,39 +1,63 @@
 {
-  "config": {
-    "step": {
-      "user": {
-        "description": "Get stations from your Home-Assistant location (check general settings to check it)",
-        "data": {
-          "max_km": "Maximum distance from home",
-          "fuels_Gazole": "Show Gazole",
-          "fuels_E10": "Show E10",
-          "fuels_E85": "Show E85",
-          "fuels_SP95": "Show SP95",
-          "fuels_SP98": "Show SP98",
-          "fuels_GPLc": "Show GPL"
+    "config": {
+        "abort": {
+            "single_instance_allowed": "Already configured. Only a single configuration possible."
+        },
+        "step": {
+            "user": {
+                "data": {
+                    "display_entity_pictures": "Add brand logo to entity pictures",
+                    "fuels_E10": "Show E10",
+                    "fuels_E85": "Show E85",
+                    "fuels_GPLc": "Show GPL",
+                    "fuels_Gazole": "Show Gazole",
+                    "fuels_SP95": "Show SP95",
+                    "fuels_SP98": "Show SP98",
+                    "max_km": "Maximum distance from home",
+                    "scan_interval": "Time in hours between two data updates"
+                },
+                "description": "Get stations from your Home-Assistant location (check general settings to check it)"
+            }
+        }
+    },
+    "options": {
+        "abort": {
+            "yaml_configuration": "Integration configured in configuration.yaml"
+        },
+        "step": {
+            "init": {
+                "data": {
+                    "display_entity_pictures": "Add brand logo to entity pictures",
+                    "fuels_E10": "Show E10",
+                    "fuels_E85": "Show E85",
+                    "fuels_GPLc": "Show GPL",
+                    "fuels_Gazole": "Show Gazole",
+                    "fuels_SP95": "Show SP95",
+                    "fuels_SP98": "Show SP98",
+                    "max_km": "Maximum distance from home",
+                    "scan_interval": "Time in hours between two data updates"
+                }
+            }
+        }
+    },
+    "services": {
+      "find_nearest_stations": {
+        "name": "Find nearest station",
+        "description": "Find less expansive nearest stations",
+        "fields": {
+          "entity_id": {
+            "name": "Entity",
+            "description": "Entity with location attributes"
+          },
+          "fuel": {
+            "name": "Fuel",
+            "description": "Fuel type"
+          },
+          "distance": {
+            "name": "Maximum distance",
+            "description": "Maximum distance between the stations and the entity"
+          }
         }
       }
-    },
-    "abort": {
-      "single_instance_allowed": "[%key:common::config_flow::abort::single_instance_allowed%]"
     }
-  },
-  "options": {
-    "step": {
-      "init": {
-        "data": {
-          "max_km": "Maximum distance from home",
-          "fuels_Gazole": "Show Gazole",
-          "fuels_E10": "Show E10",
-          "fuels_E85": "Show E85",
-          "fuels_SP95": "Show SP95",
-          "fuels_SP98": "Show SP98",
-          "fuels_GPLc": "Show GPL"
-        }
-      }
-    },
-    "abort": {
-      "yaml_configuration": "Integration configured in configuration.yaml"
-    }
-  }
 }

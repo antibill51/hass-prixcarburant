@@ -1,13 +1,63 @@
 """Config flow to configure the Prix Carburant integration."""
 from __future__ import annotations
 
+from collections.abc import Mapping
+from typing import Any
+
 import voluptuous as vol
 
-from homeassistant import config_entries
-from homeassistant.config_entries import ConfigFlow
+from homeassistant.config_entries import ConfigEntry, ConfigFlow, OptionsFlow
+from homeassistant.const import CONF_SCAN_INTERVAL
 from homeassistant.core import callback
+from homeassistant.data_entry_flow import FlowResult
 
-from .const import CONF_FUELS, CONF_MAX_KM, CONF_STATIONS, DEFAULT_NAME, DOMAIN, FUELS
+from .const import (
+    CONF_DISPLAY_ENTITY_PICTURES,
+    CONF_FUELS,
+    CONF_MAX_KM,
+    CONF_STATIONS,
+    DEFAULT_MAX_KM,
+    DEFAULT_NAME,
+    DEFAULT_SCAN_INTERVAL,
+    DOMAIN,
+    FUELS,
+)
+
+
+def _build_schema(data: Mapping[str, Any], options: Mapping[str, Any]) -> vol.Schema:
+    """Build schema according to config/options."""
+
+    config: dict[str, Any] = dict(data) | dict(options)
+
+    schema = {
+        vol.Required(
+            CONF_SCAN_INTERVAL,
+            default=config.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL),
+        ): int,
+        vol.Required(
+            CONF_DISPLAY_ENTITY_PICTURES,
+            default=config.get(CONF_DISPLAY_ENTITY_PICTURES, True),
+        ): bool,
+    }
+    if CONF_STATIONS not in config:
+        schema.update(
+            {
+                vol.Required(
+                    CONF_MAX_KM, default=config.get(CONF_MAX_KM, DEFAULT_MAX_KM)
+                ): int
+            }
+        )
+    for fuel in FUELS:
+        fuel_key = f"{CONF_FUELS}_{fuel}"
+        schema.update(
+            {
+                vol.Required(
+                    fuel_key,
+                    default=config.get(fuel_key, True),
+                ): bool
+            }
+        )
+    return vol.Schema(schema)
 
 
 class PrixCarburantConfigFlow(ConfigFlow, domain=DOMAIN):
@@ -15,7 +65,7 @@ class PrixCarburantConfigFlow(ConfigFlow, domain=DOMAIN):
 
     VERSION = 1
 
-    async def async_step_import(self, import_info):
+    async def async_step_import(self, import_info) -> FlowResult:
         """Import a config entry from YAML config."""
         entry = await self.async_set_unique_id(DOMAIN)
 
@@ -25,24 +75,12 @@ class PrixCarburantConfigFlow(ConfigFlow, domain=DOMAIN):
 
         return self.async_create_entry(title=DEFAULT_NAME, data=import_info)
 
-    async def async_step_user(self, user_input=None):
+    async def async_step_user(self, user_input=None) -> FlowResult:
         """Get configuration from the user."""
-        errors = {}
+        errors: dict[str, str] = {}
         if user_input is None:
-            schema = {
-                vol.Required(CONF_MAX_KM, default=10): int,
-            }
-            for fuel in FUELS:
-                schema.update(
-                    {
-                        vol.Required(
-                            f"{CONF_FUELS}_{fuel}",
-                            default=True,
-                        ): bool
-                    }
-                )
             return self.async_show_form(
-                step_id="user", data_schema=vol.Schema(schema), errors=errors
+                step_id="user", data_schema=_build_schema({}, {}), errors=errors
             )
 
         entry = await self.async_set_unique_id(DOMAIN)
@@ -57,46 +95,37 @@ class PrixCarburantConfigFlow(ConfigFlow, domain=DOMAIN):
 
     @staticmethod
     @callback
-    def async_get_options_flow(config_entry):
+    def async_get_options_flow(config_entry: ConfigEntry) -> OptionsFlow:
         """Define the config flow to handle options."""
         return PrixCarburantOptionsFlowHandler(config_entry)
 
 
-class PrixCarburantOptionsFlowHandler(config_entries.OptionsFlow):
+class PrixCarburantOptionsFlowHandler(OptionsFlow):
     """Handle a PrixCarburant options flow."""
 
-    def __init__(self, config_entry: config_entries.ConfigEntry) -> None:
+    def __init__(self, config_entry: ConfigEntry) -> None:
         """Initialize options flow."""
         self.config_entry = config_entry
 
-    async def async_step_init(self, user_input):
+    async def async_step_init(self, user_input) -> FlowResult:
         """Manage the options."""
-        errors = {}
+        errors: dict[str, str] = {}
         if user_input is not None:
+            self.hass.config_entries.async_update_entry(
+                self.config_entry, options=user_input
+            )
+            self.hass.async_create_task(
+                self.hass.config_entries.async_reload(self.config_entry.entry_id)
+            )
             return self.async_create_entry(
                 title=DEFAULT_NAME,
                 data=user_input,
             )
 
-        config = self.config_entry.data
-        options = self.config_entry.options
-
-        max_km = options.get(CONF_MAX_KM, config.get(CONF_MAX_KM))
-
-        schema = {}
-        if CONF_STATIONS not in config:
-            schema.update({vol.Required(CONF_MAX_KM, default=max_km): int})
-        for fuel in FUELS:
-            fuel_key = f"{CONF_FUELS}_{fuel}"
-            schema.update(
-                {
-                    vol.Required(
-                        fuel_key,
-                        default=options.get(fuel_key, config.get(fuel_key, True)),
-                    ): bool
-                }
-            )
-
         return self.async_show_form(
-            step_id="init", data_schema=vol.Schema(schema), errors=errors
+            step_id="init",
+            data_schema=_build_schema(
+                self.config_entry.data, self.config_entry.options
+            ),
+            errors=errors,
         )

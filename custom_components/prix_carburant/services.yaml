@@ -1,0 +1,27 @@
+find_nearest_stations:
+  fields:
+    entity_id:
+      required: true
+      example: person.me
+      selector:
+        entity:
+    fuel:
+      required: true
+      advanced: false
+      example: "E10"
+      selector:
+        select:
+          options:
+            - "Gazole"
+            - "SP95"
+            - "SP98"
+            - "E10"
+            - "E85"
+            - "GPLc"
+    distance:
+      required: true
+      default: 10
+      selector:
+        number:
+          min: 1
+          max: 30

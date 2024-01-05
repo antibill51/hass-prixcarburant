@@ -1,5 +1,37 @@
 # CHANGELOG
 
+## 3.3.1
+
+- Fix config flow migration to 3.2.0 version
+
+## 3.3.0
+
+- Update station and logo db
+
+## 3.2.0
+
+- Fix auto-update
+- Add scan interval option (default to 4 hours)
+- Add option to use brand logo as entity picture or not (default to yes)
+
+## 3.1.1
+
+- Fix the since days calculation
+
+## 3.1.0
+
+- Add Auchan logo
+
+## 3.0.0
+
+- Migrate to the last gouv API (v2.1) : fastest update as only nearest fuel station are updated
+- Store stations name/brand in local file to allow update by community
+- Restrict yaml configuration to static list only
+- Add `brand` atribute
+- Add entity pictures
+- Add `button.prix_carburant_refresh_prices` entity to ask to refresh prices
+- Add `prix_carburant.find_nearest_stations` service "Prix Carburant: Trouver les stations proches"
+
 ## 2.5.0
 
 - Replace `async_setup_platforms` deprecated method

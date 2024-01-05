@@ -9,8 +9,6 @@
   "documentation": "https://github.com/Aohzan/hass-prixcarburant/",
   "iot_class": "cloud_polling",
   "issue_tracker": "https://github.com/Aohzan/hass-prixcarburant/issues",
-  "requirements": [
-    "xmltodict==0.13.0"
-  ],
-  "version": "2.5.0"
+  "requirements": [],
+  "version": "3.2.0"
 }
